@@ -2,6 +2,7 @@
 
 class DataPacket {
 public:
+    uint64_t station_id;
     float temp;
     float hum;
     float accel_x;
@@ -15,6 +16,7 @@ public:
 
     String toJson() const {
         StaticJsonDocument<256> doc;
+        doc["station_id"] = station_id;
         doc["temp"] = temp;
         doc["hum"] = hum;
         doc["accel_x"] = accel_x;
@@ -36,6 +38,7 @@ public:
         deserializeJson(doc, jsonString);
 
         DataPacket packet;
+        packet.station_id = doc["station_id"];
         packet.temp = doc["temp"];
         packet.hum = doc["hum"];
         packet.accel_x = doc["accel_x"];
