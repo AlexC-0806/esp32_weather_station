@@ -1,6 +1,10 @@
+#ifndef DATA_H
+#define DATA_H
+
 #include <ArduinoJson.h>
 
-class DataPacket {
+class DataPacket
+{
 public:
     uint64_t station_id;
     float temp;
@@ -14,7 +18,8 @@ public:
     float light;
     float air_pressure;
 
-    String toJson() const {
+    String toJson() const
+    {
         StaticJsonDocument<256> doc;
         doc["station_id"] = station_id;
         doc["temp"] = temp;
@@ -33,7 +38,8 @@ public:
         return output;
     }
 
-    static DataPacket fromJson(const String& jsonString) {
+    static DataPacket fromJson(const String &jsonString)
+    {
         StaticJsonDocument<256> doc;
         deserializeJson(doc, jsonString);
 
@@ -53,3 +59,5 @@ public:
         return packet;
     }
 };
+
+#endif // DATA_H
