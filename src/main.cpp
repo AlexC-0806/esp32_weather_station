@@ -13,7 +13,7 @@
 
 TFT_eSPI tft = TFT_eSPI(); // Invoke custom library
 
-#define DHT_PIN 12
+#define DHT_PIN 13
 #define SOUND_PIN 35
 #define LIGHT_PIN 34
 #define RAIN_PIN 32
@@ -71,6 +71,7 @@ void setup(void)
     Serial.begin(115200);
     data.station_id = ESP.getEfuseMac();
     tft.init();
+    tft.setRotation(1); // Set rotation to landscape
     tft.fillScreen(TFT_BLACK);
     tft.setTextColor(TFT_WHITE);
     tft.setTextSize(1);
@@ -93,8 +94,8 @@ void setup(void)
 
 void retrieveData()
 {
-    data.sound = analogRead(SOUND_PIN);
-    data.light = analogRead(LIGHT_PIN);
+    data.sound = analogRead(SOUND_PIN) / 10.0; // Scale down for better readability
+    data.light = exp(float(analogRead(LIGHT_PIN)) / 80.0);
     data.rain_quantity = analogRead(RAIN_PIN);
     data.isRaining = digitalRead(RAIN_DIGITAL_PIN);
     data.accel_x = LIS.getAccelerationX();
@@ -102,7 +103,7 @@ void retrieveData()
     data.accel_z = LIS.getAccelerationZ();
     data.temp = dht.readTemperature();
     data.hum = dht.readHumidity();
-    data.air_pressure = bmp.getPressure();
+    data.air_pressure = bmp.getPressure() / 100.0; // Convert to hPa
 }
 
 void showDataOnScreen()
@@ -130,7 +131,7 @@ void showDataOnScreen()
     tft.println(data.air_pressure);
     tft.setCursor(0, 70);
     tft.print("Is Raining: ");
-    tft.println(data.isRaining);
+    tft.println(data.isRaining ? "Yes" : "No");
     tft.setCursor(0, 80);
     tft.print("Accel X: ");
     tft.println(data.accel_x);
