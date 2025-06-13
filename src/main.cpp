@@ -9,6 +9,7 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <ServerCommands.h>
+#include <BotCommands.h>
 #include "secrets.h"
 
 TFT_eSPI tft = TFT_eSPI(); // Invoke custom library
@@ -89,6 +90,9 @@ void setup(void)
     tft.println(data.station_id);
     tft.println("Setup of sensors...");
     setupSensors();
+    tft.println("Sensors initialized successfully!");
+    setupBot();
+    tft.println("Bot setup completed!");
     delay(1000);
 }
 
@@ -149,11 +153,16 @@ void showDataOnScreen()
 void loop()
 {
     retrieveData();
+    if (data.accel_y > 0.5 || data.accel_z > 0.5)
+    {
+        sendEarthquakeAlert(data);
+    }
     currentMillis = millis();
     if (currentMillis - latestMillis >= 100)
     {
         latestMillis = currentMillis;
         showDataOnScreen();
+        updateBot(data);
     }
     if (currentMillis - updateMillis >= 5000)
     {

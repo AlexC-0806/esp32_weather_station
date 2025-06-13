@@ -1,5 +1,6 @@
-seeed-studio/Grove - Barometer Sensor BMP280@^1.0.1
 bodmer/TFT_eSPI@^2.5.43
 adafruit/DHT sensor library@^1.4.6
+seeed-studio/Grove - Barometer Sensor BMP280@^1.0.1
+https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot.git
 https://github.com/bblanchon/ArduinoJson.git
 seeed-studio/Grove-3-Axis-Digital-Accelerometer-2g-to-16g-LIS3DHTR@^1.2.4

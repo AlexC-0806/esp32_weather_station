@@ -7,4 +7,11 @@
 #define SERVER_ADDRESS "http://0.0.0.0"
 #define SERVER_PORT 3000
 
+#define BOT_TOKEN "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+String ALLOWED_CHAT_IDS[2] = {
+    "1234567890", // Ale
+    "3314165544", // Andrea
+};
+
 #endif // SECRETS_H
