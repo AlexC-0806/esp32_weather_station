@@ -26,6 +26,7 @@ void sendDataPacketToBot(DataPacket data, String chat_id)
     message += "Acceleration Z: " + String(data.accel_z) + "\n";
     message += "Sound: " + String(data.sound) + " dB" + "\n";
     message += "Rain Quantity: " + String(data.rain_quantity) + "\n";
+    message += "Wind Speed: " + String(data.wind_speed) + " m/s" + "\n";
     message += "Is Raining: " + String(data.isRaining ? "Yes" : "No") + "\n";
     message += "Light: " + String(data.light) + " lux" + "\n";
     message += "Air Pressure: " + String(data.air_pressure) + " hPa" + "\n";
@@ -62,6 +63,12 @@ void sendAirPressure(DataPacket data, String chat_id)
 {
     String pressureMessage = "Current air pressure: " + String(data.air_pressure) + " hPa";
     bot.sendSimpleMessage(chat_id, pressureMessage, "");
+}
+
+void sendWindSpeed(DataPacket data, String chat_id)
+{
+    String windMessage = "Current wind speed: " + String(data.wind_speed) + " m/s";
+    bot.sendSimpleMessage(chat_id, windMessage, "");
 }
 
 void sendEarthquakeAlert(DataPacket data)
@@ -136,6 +143,10 @@ void handleMessages(int numNewMessages, DataPacket data)
         else if (text == "/sendpressure")
         {
             sendAirPressure(data, chat_id);
+        }
+        else if (text == "/sendwind")
+        {
+            sendWindSpeed(data, chat_id);
         }
     }
 }

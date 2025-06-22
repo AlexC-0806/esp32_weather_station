@@ -14,6 +14,7 @@ public:
     float accel_z;
     float sound;
     float rain_quantity;
+    float wind_speed;
     bool isRaining;
     float light;
     float air_pressure;
@@ -29,6 +30,7 @@ public:
         doc["accel_z"] = accel_z;
         doc["sound"] = sound;
         doc["rain_quantity"] = rain_quantity;
+        doc["wind_speed"] = wind_speed;
         doc["isRaining"] = isRaining;
         doc["light"] = light;
         doc["air_pressure"] = air_pressure;
@@ -52,6 +54,7 @@ public:
         packet.accel_z = doc["accel_z"];
         packet.sound = doc["sound"];
         packet.rain_quantity = doc["rain_quantity"];
+        packet.wind_speed = doc["wind_speed"];
         packet.isRaining = doc["isRaining"];
         packet.light = doc["light"];
         packet.air_pressure = doc["air_pressure"];

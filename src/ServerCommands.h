@@ -147,6 +147,22 @@ void sendAirPressure(float air_pressure)
     http.end();
 }
 
+void sendWindSpeed(float wind_speed)
+{
+    StaticJsonDocument<64> doc;
+    doc["wind_speed"] = wind_speed;
+
+    String jsonString;
+    serializeJson(doc, jsonString);
+
+    http.begin(wifi, String(SERVER_ADDRESS) + ":" + String(SERVER_PORT) + "/wind");
+    http.addHeader("Content-Type", "application/json");
+    int httpResponseCode = http.POST(jsonString);
+
+    handleResponse(httpResponseCode);
+    http.end();
+}
+
 void sendStationId(uint64_t station_id)
 {
     StaticJsonDocument<64> doc;

@@ -4,6 +4,7 @@
 #include <Data.h>
 #include "LIS3DHTR.h"
 #include "Seeed_BMP280.h"
+#include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <Wire.h>
@@ -27,6 +28,8 @@ DHT dht(DHT_PIN, DHT11);
 
 BMP280 bmp;
 
+Adafruit_MPU6050 mpu;
+
 LIS3DHTR<TwoWire> LIS; // IIC
 #define WIRE Wire
 
@@ -34,7 +37,40 @@ unsigned long latestMillis = 0;
 unsigned long currentMillis = 0;
 unsigned long updateMillis = 0;
 
+// Anemometer parameters
+const float SENSOR_RADIUS = 0.02;     // 2cm from center (in meters)
+const float CALIBRATION_FACTOR = 2.5; // Start with 2.5, calibrate for accuracy
+
+// Gyro calibration variables
+float gyroOffsetZ = 0;
+const int CALIBRATION_SAMPLES = 500;
+
+// Anemometer sampling parameters
+float windSpeed = 0;
+float accumulatedAngle = 0;
+unsigned long lastWindCalc = 0;
+const unsigned long WIND_INTERVAL = 3000; // 3-second window
+unsigned long lastGyroTime = 0;
+
 DataPacket data;
+
+void calibrateGyro()
+{
+    Serial.println("Calibrating gyro... keep sensor still");
+    float sumZ = 0;
+
+    for (int i = 0; i < CALIBRATION_SAMPLES; i++)
+    {
+        sensors_event_t a, g, temp;
+        mpu.getEvent(&a, &g, &temp);
+        sumZ += g.gyro.z;
+        delay(5);
+    }
+
+    gyroOffsetZ = sumZ / CALIBRATION_SAMPLES;
+    Serial.print("Calibration complete. Z-offset: ");
+    Serial.println(gyroOffsetZ);
+}
 
 void throwInitializationError(String message)
 {
@@ -65,6 +101,16 @@ void setupSensors()
     {
         throwInitializationError("BMP280 not connected or broken!");
     }
+    if (!mpu.begin())
+    {
+        throwInitializationError("MPU6050 not connected or broken!");
+    }
+    mpu.setAccelerometerRange(MPU6050_RANGE_16_G);
+    mpu.setGyroRange(MPU6050_RANGE_2000_DEG);
+    mpu.setFilterBandwidth(MPU6050_BAND_260_HZ);
+
+    // Calibrate gyro
+    calibrateGyro();
 }
 
 void setup(void)
@@ -95,9 +141,45 @@ void setup(void)
     tft.println("Bot setup completed!");
     delay(1000);
 }
+void measureWindSpeed()
+{
+    unsigned long now = millis();
+
+    // First call initialization
+    if (lastGyroTime == 0)
+    {
+        lastGyroTime = now;
+        return;
+    }
+
+    // Get time delta in seconds
+    float dt = (now - lastGyroTime) / 1000.0f;
+    lastGyroTime = now;
+
+    // Read gyro
+    sensors_event_t a, g, temp;
+    mpu.getEvent(&a, &g, &temp);
+
+    // Integrate angular velocity (absolute value)
+    accumulatedAngle += abs(g.gyro.z - gyroOffsetZ) * dt;
+
+    // Calculate at fixed intervals
+    if (now - lastWindCalc >= WIND_INTERVAL)
+    {
+        float rotations = accumulatedAngle / (2 * PI);
+        float frequency = rotations / (WIND_INTERVAL / 1000.0f);
+        windSpeed = 2 * PI * SENSOR_RADIUS * frequency * CALIBRATION_FACTOR;
+
+        // Reset for next interval
+        accumulatedAngle = 0;
+        lastWindCalc = now;
+    }
+}
 
 void retrieveData()
 {
+    measureWindSpeed();                        // Call to measure wind speed
+    data.wind_speed = windSpeed;               // Store wind speed in data packet
     data.sound = analogRead(SOUND_PIN) / 10.0; // Scale down for better readability
     data.light = exp(float(analogRead(LIGHT_PIN)) / 80.0);
     data.rain_quantity = analogRead(RAIN_PIN);
@@ -133,6 +215,10 @@ void showDataOnScreen()
     tft.setCursor(0, 50);
     tft.print("Air Pressure: ");
     tft.println(data.air_pressure);
+    tft.setCursor(0, 60);
+    tft.print("Wind Speed: ");
+    tft.print(data.wind_speed);
+    tft.println(" m/s");
     tft.setCursor(0, 70);
     tft.print("Is Raining: ");
     tft.println(data.isRaining ? "Yes" : "No");
