@@ -182,8 +182,8 @@ void retrieveData()
     data.wind_speed = windSpeed;               // Store wind speed in data packet
     data.sound = analogRead(SOUND_PIN) / 10.0; // Scale down for better readability
     data.light = exp(float(analogRead(LIGHT_PIN)) / 80.0);
-    // data.rain_quantity = analogRead(RAIN_PIN);
-    // data.isRaining = digitalRead(RAIN_DIGITAL_PIN);
+    data.rain_quantity = 0;
+    data.isRaining = false;
     data.accel_x = LIS.getAccelerationX();
     data.accel_y = LIS.getAccelerationY();
     data.accel_z = LIS.getAccelerationZ();
