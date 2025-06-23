@@ -113,7 +113,7 @@ void sendAccelData(float x, float y, float z)
     handleResponse(httpResponseCode);
     http.end();
 }
-
+/*
 void sendRainData(float rain_quantity, bool isRaining)
 {
     StaticJsonDocument<128> doc;
@@ -130,6 +130,7 @@ void sendRainData(float rain_quantity, bool isRaining)
     handleResponse(httpResponseCode);
     http.end();
 }
+    */
 
 void sendAirPressure(float air_pressure)
 {
