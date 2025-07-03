@@ -113,24 +113,6 @@ void sendAccelData(float x, float y, float z)
     handleResponse(httpResponseCode);
     http.end();
 }
-/*
-void sendRainData(float rain_quantity, bool isRaining)
-{
-    StaticJsonDocument<128> doc;
-    doc["rain_quantity"] = rain_quantity;
-    doc["isRaining"] = isRaining;
-
-    String jsonString;
-    serializeJson(doc, jsonString);
-
-    http.begin(wifi, String(SERVER_ADDRESS) + ":" + String(SERVER_PORT) + "/rain");
-    http.addHeader("Content-Type", "application/json");
-    int httpResponseCode = http.POST(jsonString);
-
-    handleResponse(httpResponseCode);
-    http.end();
-}
-    */
 
 void sendAirPressure(float air_pressure)
 {

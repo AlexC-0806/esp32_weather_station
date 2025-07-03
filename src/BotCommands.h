@@ -25,9 +25,7 @@ void sendDataPacketToBot(DataPacket data, String chat_id)
     message += "Acceleration Y: " + String(data.accel_y) + "\n";
     message += "Acceleration Z: " + String(data.accel_z) + "\n";
     message += "Sound: " + String(data.sound) + " dB" + "\n";
-    //   message += "Rain Quantity: " + String(data.rain_quantity) + "\n";
     message += "Wind Speed: " + String(data.wind_speed) + " m/s" + "\n";
-    //   message += "Is Raining: " + String(data.isRaining ? "Yes" : "No") + "\n";
     message += "Light: " + String(data.light) + " lux" + "\n";
     message += "Air Pressure: " + String(data.air_pressure) + " hPa" + "\n";
     bot.sendMessage(chat_id, message, "");
@@ -48,12 +46,7 @@ void sendSound(DataPacket data, String chat_id)
 {
     String soundMessage = "Current sound level: " + String(data.sound);
     bot.sendSimpleMessage(chat_id, soundMessage, "");
-} /*
- void sendRainQuantity(DataPacket data, String chat_id)
- {
-     String rainMessage = "Current rain quantity: " + String(data.rain_quantity);
-     bot.sendSimpleMessage(chat_id, rainMessage, "");
- }*/
+}
 void sendLight(DataPacket data, String chat_id)
 {
     String lightMessage = "Current light level: " + String(data.light) + " lux";
@@ -132,12 +125,6 @@ void handleMessages(int numNewMessages, DataPacket data)
         {
             sendSound(data, chat_id);
         }
-        /*
-            else if (text == "/sendrain")
-            {
-                sendRainQuantity(data, chat_id);
-            }
-                */
         else if (text == "/sendlight")
         {
             sendLight(data, chat_id);

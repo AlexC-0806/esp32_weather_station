@@ -18,8 +18,6 @@ TFT_eSPI tft = TFT_eSPI(); // Invoke custom library
 #define DHT_PIN 13
 #define SOUND_PIN 35
 #define LIGHT_PIN 34
-// #define RAIN_PIN 32
-// #define RAIN_DIGITAL_PIN 25
 
 #define SDA 22
 #define SCL 23
@@ -87,8 +85,6 @@ void setupSensors()
     Wire.begin(SDA, SCL);
     pinMode(SOUND_PIN, INPUT);
     pinMode(LIGHT_PIN, INPUT);
-    //  pinMode(RAIN_PIN, INPUT);
-    // pinMode(RAIN_DIGITAL_PIN, INPUT);
     LIS.begin(WIRE, LIS3DHTR_ADDRESS_UPDATED);
     LIS.setOutputDataRate(LIS3DHTR_DATARATE_400HZ);
     delay(100);
@@ -182,8 +178,6 @@ void retrieveData()
     data.wind_speed = windSpeed;               // Store wind speed in data packet
     data.sound = analogRead(SOUND_PIN) / 10.0; // Scale down for better readability
     data.light = exp(float(analogRead(LIGHT_PIN)) / 80.0);
-    data.rain_quantity = 0;
-    data.isRaining = false;
     data.accel_x = LIS.getAccelerationX();
     data.accel_y = LIS.getAccelerationY();
     data.accel_z = LIS.getAccelerationZ();
@@ -209,9 +203,6 @@ void showDataOnScreen()
     tft.setCursor(0, 30);
     tft.print("Light: ");
     tft.println(data.light);
-    // tft.setCursor(0, 40);
-    // tft.print("Rain Quantity: ");
-    //  tft.println(data.rain_quantity);
     tft.setCursor(0, 50);
     tft.print("Air Pressure: ");
     tft.println(data.air_pressure);
@@ -219,9 +210,6 @@ void showDataOnScreen()
     tft.print("Wind Speed: ");
     tft.print(data.wind_speed);
     tft.println(" m/s");
-    //    tft.setCursor(0, 70);
-    //  tft.print("Is Raining: ");
-    //  tft.println(data.isRaining ? "Yes" : "No");
     tft.setCursor(0, 80);
     tft.print("Accel X: ");
     tft.println(data.accel_x);
